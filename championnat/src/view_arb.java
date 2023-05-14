@@ -1,0 +1,46 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.*;
+public class view_arb {
+    public void show() {
+        JFrame f=new JFrame(); 
+        String[] columnnames={"id_arbitre","nom arbitre"};
+        try{  
+            Class.forName("com.mysql.cj.jdbc.Driver");  
+            Connection con=connection.getConnection();
+            int numberofrow=0;
+            PreparedStatement req=con.prepareStatement("select count(*) from arbitre");
+            ResultSet r_count=req.executeQuery();
+
+            if(r_count.next()){
+                numberofrow=r_count.getInt(1);
+            }else{
+                numberofrow=0;
+            }
+            req.close();
+            PreparedStatement pstmt=con.prepareStatement("select * from arbitre");
+            ResultSet rs=pstmt.executeQuery();
+            String[][] data=new String[numberofrow][2];
+            int i=0;
+            while(rs.next()){
+                data[i][0]=rs.getString(1);
+                data[i][1]=rs.getString(2);
+                i++;
+            }
+            JTable t=new JTable(data,columnnames);
+            JScrollPane sp = new JScrollPane(t);
+            f.setTitle("view arbitre");
+            f.setBounds(50, 200, 1000, 700);
+            f.add(sp);
+            f.setVisible(true);
+            System.out.println("vlaues selected");
+            pstmt.close();
+            con.close();
+        }catch(SQLException | ClassNotFoundException er){
+            System.out.println(er);
+        }
+
+    }
+}
